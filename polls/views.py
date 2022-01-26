@@ -1,7 +1,5 @@
-from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse
-from django.urls import reverse
+from django.contrib import messages
 from polls.models import Question, Choice
 
 def index(request):
@@ -12,28 +10,24 @@ def index(request):
 
 def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/detail.html', {'question': question})
+    choices = Choice.objects.filter(question_id=question.id).order_by('choice_text')
+    return render(request, 'polls/detail.html', {'question': question, 'choices': choices})
 
 
 def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/results.html', {'question': question})
+    choices = Choice.objects.filter(question_id=question.id).order_by('-votes')
+    return render(request, 'polls/results.html', {'question': question, 'choices': choices})
 
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     try:
-        selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        selected_choice = Choice.objects.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
-        # Redisplay the question voting form.
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "Você não selecionou uma opção.",
-        })
+        messages.warning(request, "Você não selecionou uma opção.")
+        return detail(request, question.id)
     else:
         selected_choice.votes += 1
         selected_choice.save()
-        # Always return an HttpResponseRedirect after successfully dealing
-        # with POST data. This prevents data from being posted twice if a
-        # user hits the Back button.
-        return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+        return results(request, question.id)

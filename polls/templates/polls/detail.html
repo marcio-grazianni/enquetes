@@ -9,20 +9,30 @@
 
 <body>
 
-    <form action="{% url 'polls:vote' question.id %}" method="post">
+    <form action="{% url 'vote' question.id %}" method="post">
         {% csrf_token %}
 
-        <a href="{% url 'polls:index' %}">Início</a>
+        <a href="{% url 'index' %}">Início</a>
         <fieldset>
             <legend>
                 <h1>{{ question.question_text }}</h1>
             </legend>
-            {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-            {% for choice in question.choice_set.all %}
-            <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% for choice in choices %}
+                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
             {% endfor %}
+            <br>
         </fieldset>
+        <br>
         <button type="submit">Votar</button>
     </form>
 
