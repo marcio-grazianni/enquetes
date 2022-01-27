@@ -217,3 +217,9 @@ hr {
 .sombra_texto {
     text-shadow: black 0.1em 0.1em 0.2em
 }
+
+@media (min-width: 992px) {
+    .titulo_menu {
+        padding-right: 13rem !important;
+    }
+}
