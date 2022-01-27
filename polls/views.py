@@ -25,7 +25,7 @@ def vote(request, question_id):
     try:
         selected_choice = Choice.objects.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
-        messages.warning(request, "Você não selecionou uma opção.")
+        messages.error(request, "Você não selecionou uma opção.")
         return detail(request, question.id)
     else:
         selected_choice.votes += 1

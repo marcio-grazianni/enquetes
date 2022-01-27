@@ -1,41 +1,42 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+{% extends 'base.html' %}
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail</title>
-</head>
 
-<body>
+{% block 'head' %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
 
-    <form action="{% url 'vote' question.id %}" method="post">
-        {% csrf_token %}
 
-        <a href="{% url 'index' %}">Início</a>
-        <fieldset>
-            <legend>
+{% block 'titulo' %}
+Detalhes
+{% endblock %}
+
+{% block 'body' %}
+
+    <div class="container mt-3 pt-4 pb-4">
+        <div class="d-flex justify-content-center">
+
+            <form action="{% url 'vote' question.id %}" method="post">
+                {% csrf_token %}
+
                 <h1>{{ question.question_text }}</h1>
-            </legend>
 
-            {% if messages %}
-                <ul class="messages">
+                {% if messages %}
                     {% for message in messages %}
-                        <li class="{{ message.tags }}">{{ message }}</li>
+                        <div class="alert {{message.tags}}">
+                            {{message}}
+                        </div>
                     {% endfor %}
-                </ul>
-            {% endif %}
+                {% endif %}
 
-            {% for choice in choices %}
-                <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
-                <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
-            {% endfor %}
-            <br>
-        </fieldset>
-        <br>
-        <button type="submit">Votar</button>
-    </form>
+                {% for choice in choices %}
+                    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+                    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
+                {% endfor %}
 
-</body>
+                <button class="btn btn-success mt-2" type="submit">Votar</button>
+            </form>
+        </div>
+    </div>
 
-</html>
+{% endblock %}
